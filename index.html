@@ -1,146 +1,117 @@
 <!doctype html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Delivery — Variante B (A/B)</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./styles-ab-b.css" />
-    <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "w27qebeayg");
-</script>
-  </head>
-  <body data-ab-variant="b">
+    <title>RushEats — Proceso Real</title>
+    <style>
+        :root {
+            --primary: #ff5a00;
+            --success: #00b894;
+            --secondary: #2d3436;
+            --bg: #fdfdfd;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); margin: 0; color: var(--secondary); overflow-x: hidden; }
+        
+        /* Navbar */
+        .header { background: var(--white); padding: 1rem; text-align: center; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .header h1 { margin: 0; color: var(--primary); font-size: 1.4rem; letter-spacing: -1px; }
+
+        /* Paneles */
+        .panel { max-width: 500px; margin: 1rem auto; padding: 1.5rem; display: none; animation: slideIn 0.3s ease-out; }
+        .panel.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Cards y Listas */
+        .card { background: var(--white); border-radius: 15px; padding: 1rem; margin-bottom: 1rem; box-shadow: var(--shadow); display: flex; align-items: center; gap: 15px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .card img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; }
+        
+        .plato-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem; border-radius: 12px; margin-bottom: 0.8rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+
+        /* Formuarios */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: #636e72; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        
+        /* Botones */
+        .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 1rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #e04f00; }
+        .btn-ghost { background: #eee; color: #555; margin-bottom: 1rem; }
+
+        /* Mini Alertas (Toast) */
+        #toast-container { position: fixed; top: 80px; right: 20px; z-index: 1000; }
+        .toast { background: var(--secondary); color: white; padding: 12px 20px; border-radius: 8px; margin-bottom: 10px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px; animation: fadeInRight 0.3s; border-left: 4px solid var(--primary); }
+        @keyframes fadeInRight { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Botón Flotante Carrito */
+        #btn-flotante-carrito { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; box-shadow: 0 8px 15px rgba(255,90,0,0.4); cursor: pointer; display: none; z-index: 900; }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
     <header class="header">
-      <div class="header-top">
-        <img
-          src="./assets/logo-delivery-b.svg"
-          width="44"
-          height="44"
-          alt=""
-          class="header-logo"
-        />
         <h1>RushEats</h1>
-      </div>
-      <!-- Flujo confuso: “Restaurantes” y “Categorías” parecen lo mismo pero son pasos distintos -->
-      <div class="steps" aria-label="Pasos">
-        <span class="step active" data-step-indicator="1">
-          <img
-            src="./assets/ico-ubicacion.svg"
-            width="14"
-            height="14"
-            alt=""
-            class="step-ico"
-          />
-          Elegí local
-        </span>
-        <span class="step" data-step-indicator="2">
-          <img
-            src="./assets/ico-menu.svg"
-            width="14"
-            height="14"
-            alt=""
-            class="step-ico"
-          />
-          Tu menú
-        </span>
-        <span class="step subtle-step" data-step-indicator="3">
-          <img
-            src="./assets/ico-lista.svg"
-            width="14"
-            height="14"
-            alt=""
-            class="step-ico"
-          />
-          Revisar
-        </span>
-      </div>
     </header>
 
-    <main class="main">
-      <!-- Paso 1: elegir restaurante (y filtro por categoría poco claro) -->
-      <section id="step-restaurante" class="panel active">
-        <h2>Locales cerca tuyo</h2>
-        <p class="muted">
-          Elegí un restaurante. El filtro de categoría solo ordena la lista.
-        </p>
-        <div class="filtros">
-          <label class="sr-only" for="filtro-cat">Categoría</label>
-          <select id="filtro-cat" aria-label="Filtrar por tipo de comida">
-            <option value="todas">Todas</option>
-            <option value="pizza">Pizza</option>
-            <option value="asiatica">Asiática</option>
-            <option value="hamburguesas">Hamburguesas</option>
-          </select>
+    <section id="panel-restaurantes" class="panel active">
+        <h2>Restaurantes abiertos</h2>
+        <div id="lista-restaurantes"></div>
+    </section>
+
+    <section id="panel-menu" class="panel">
+        <button class="btn btn-ghost" onclick="irAPaso('panel-restaurantes')">← Cambiar Restaurante</button>
+        <h2 id="nombre-header-menu">Menú</h2>
+        <div id="lista-platos"></div>
+    </section>
+
+    <section id="panel-direccion" class="panel">
+        <button class="btn btn-ghost" onclick="irAPaso('panel-menu')">← Volver al menú</button>
+        <h2>¿A dónde lo llevamos?</h2>
+        <div class="form-group">
+            <label>Calle y Número</label>
+            <input type="text" id="dir-calle" placeholder="Ej: Av. Principal 123">
         </div>
-        <ul id="lista-restaurantes" class="lista-cards"></ul>
-      </section>
-
-      <!-- Paso 2: productos del restaurante elegido -->
-      <section id="step-productos" class="panel" hidden>
-        <button type="button" class="link-back confusing" id="btn-volver-rest">
-          &larr; Cambiar sitio
-        </button>
-        <h2 id="titulo-restaurante">Menú</h2>
-        <ul id="lista-platos" class="lista-platos"></ul>
-        <div class="sticky-cta">
-          <!-- Botón resumen poco visible -->
-          <button type="button" id="btn-carrito" class="btn btn-faint">
-            Ver resumen del pedido
-          </button>
+        <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;">
+                <label>Piso/Dpto</label>
+                <input type="text" id="dir-piso" placeholder="2B">
+            </div>
+            <div class="form-group" style="flex: 2;">
+                <label>Referencia</label>
+                <input type="text" id="dir-ref" placeholder="Portón azul">
+            </div>
         </div>
-      </section>
+        <button class="btn btn-primary" onclick="validarDireccion()">Continuar al Pago</button>
+    </section>
 
-      <!-- Paso 3: resumen -->
-      <section id="step-resumen" class="panel" hidden>
-        <h2>Resumen</h2>
-        <p class="muted">
-          Confirmá el total. Para sumar platos, volvé al menú con el botón de abajo.
-        </p>
-        <ul id="lista-resumen" class="lista-resumen"></ul>
-        <p id="resumen-vacio" class="muted">Nada seleccionado.</p>
-        <p class="total-line">
-          Total estimado: <strong id="total-delivery">0,00 €</strong>
-        </p>
-        <div class="actions">
-          <button
-            type="button"
-            class="btn btn-ghost-small"
-            id="btn-seguir-comprando"
-          >
-            Agregar más
-          </button>
-          <button type="button" id="btn-comprar" class="btn btn-primary">
-            <img
-              src="./assets/ico-pedido.svg"
-              width="18"
-              height="18"
-              alt=""
-              class="btn-ico-inline"
-            />
-            Pedir ahora
-          </button>
+    <section id="panel-pago" class="panel">
+        <button class="btn btn-ghost" onclick="irAPaso('panel-direccion')">← Volver a dirección</button>
+        <h2>Resumen y Pago</h2>
+        <div id="resumen-pedido" style="background: #fff; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;"></div>
+        <div class="form-group">
+            <label>Tarjeta de Crédito</label>
+            <input type="text" placeholder="0000 0000 0000 0000">
         </div>
-      </section>
+        <button class="btn btn-primary" onclick="irAPaso('panel-exito')">Pagar Ahora</button>
+    </section>
 
-      <!-- Confirmación -->
-      <section id="step-confirmacion" class="panel panel-center" hidden>
-        <h2>Pedido enviado</h2>
-        <p id="msg-confirm">En breve recibirá el tiempo estimado.</p>
-        <button type="button" class="btn btn-primary" id="btn-nuevo">
-          Nuevo pedido
-        </button>
-      </section>
-    </main>
+    <section id="panel-exito" class="panel" style="text-align: center;">
+        <div style="font-size: 4rem;">🛵</div>
+        <h2>¡Pedido en camino!</h2>
+        <p>Tu comida va hacia: <br><strong id="dir-final"></strong></p>
+        <button class="btn btn-primary" onclick="location.reload()">Hacer otro pedido</button>
+    </section>
 
-    <footer class="footer">
-      <small>RushEats — variante B (A/B)</small>
-    </footer>
+    <button id="btn-flotante-carrito" onclick="irAPaso('panel-direccion')">
+        Ir a pedir (<span id="count-carrito">0</span>)
+    </button>
 
-    <script src="./script.js"></script>
-  </body>
+    <script src="script.js"></script>
+</body>
 </html>
