@@ -230,58 +230,6 @@ function irAPaso(panelId) {
         updateCartBadge();
     }
 }
-        <div class="card" onclick="verMenu('${r.id}')">
-            <img src="${r.img}" alt="${r.nombre}">
-            <div>
-                <strong>${r.nombre}</strong>
-                <p style="margin:0; font-size:0.8rem; color:grey;">${r.cat.toUpperCase()}</p>
-            </div>
-        </div>
-    `).join('');
-}
-
-function verMenu(id) {
-    const rest = DATA.restaurantes.find(r => r.id === id);
-    document.getElementById('nombre-header-menu').innerText = rest.nombre;
-    const container = document.getElementById('lista-platos');
-    
-    container.innerHTML = DATA.menu[id].map(p => `
-        <div class="plato-item">
-            <span>${p.n} - <strong>€${p.p}</strong></span>
-            <button class="btn" style="width:auto; padding:8px 15px; background:var(--primary); color:white;" 
-                    onclick="agregarAlCarrito('${p.n}', ${p.p})">Añadir +</button>
-        </div>
-    `).join('');
-    irAPaso('panel-menu');
-}
-
-function agregarAlCarrito(nombre, precio) {
-    // Check if item already exists
-    const existingItem = carrito.find(item => item.nombre === nombre);
-    if (existingItem) {
-        existingItem.cantidad += 1;
-    } else {
-        carrito.push({ nombre, precio, cantidad: 1 });
-    }
-    
-    // Update cart badge
-    updateCartBadge();
-    
-    // Show toast notification with option to view cart
-    lanzarAlerta('¡Producto añadido al carrito! <button onclick="irAPaso(\'panel-carrito\'); this.parentElement.parentElement.remove();" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 4px 8px; margin-left: 10px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Ver carrito</button>');
-}
-
-function updateCartBadge() {
-    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-    const badge = document.getElementById('cart-badge');
-    
-    if (totalItems > 0) {
-        badge.innerText = totalItems;
-        badge.style.display = 'inline-block';
-    } else {
-        badge.style.display = 'none';
-    }
-}
 
 function lanzarAlerta(msg) {
     const container = document.getElementById('toast-container');
